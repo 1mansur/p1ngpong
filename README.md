@@ -1,26 +1,31 @@
 from pygame import*
+#подключаем модуль pygame
 
+#подключаем музыку
 '''mixer.init()
 mixer.music.load('')
 mixer.music.play()'''
 
+#
 img_back = 'white.jpg'
 img_hero = 'racket.png'
 
+#подключаем класс родитель для других классов
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y, size_x, size_y, player_speed):
         super().__init__()
-
+        #каждый спрайт должен сохранить свой image - изоброжение
         self.image = transform.scale(image.load(player_image), (size_x, size_y))
         self.speed = player_speed
-
+        #каждый спрайт должен сохранить свой rect - прямоугольникб в каторой он вписан
         self.rect = self.image.get_rect()
         self.rect.x = player_x
         self.rect.y = player_y
-
+   
     def reset(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
+#класс наследник  для спрайта - игрока
 class Player(GameSprite):
     def update(self):
         keys = key.get_pressed() 
@@ -35,16 +40,19 @@ class Player(GameSprite):
         if keys[K_s] and self.rect.y < win_width - 80:
             self.rect.y += self.speed
 
+#игровая сцена
 back = (200, 255, 255)
 win_width = 600 
 win_height = 500
 window = display.set_mode((win_width, win_height))
 
+#флаги отвечающие за состаяние игры
 game = True
 finish = False
 clock = time.Clock()
 FPS = 60
 
+#создание мяча и раетки
 racket1 = Player('racket.png', 30, 200, 50, 150,5)
 racket2 = Player('racket.png', 520, 200, 50, 150,5)
 ball = GameSprite('ball.png', 200, 200, 50, 50,5)
@@ -73,14 +81,17 @@ while game:
             speed_x *= -1
             speed_y *= 1 
 
+        #если мяч достигает границ экрана меняем направление  его движения
         if ball.rect.y > win_height-50 or ball.rect.y < 0:
             speed_y *= -1
-
+        
+        #если мяч улетел дальше решотки выводим условие пройгрыша для первого игрока
         if ball.rect.x < 0:
             finish = True
             window.blit(lose1, (200, 200))
             game_over= True
-
+        
+        #если мяч улетел дальше решотки выводим условие пройгрыша для второго игрока
         if ball.rect.x > win_width:
             finish = True
             window.blit(lose2, (200, 200))
